@@ -26,7 +26,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # AQUÍ ESTÀ EL TRUC: li diem que publiqui la teva carpeta www
-          path: './www'
+          path: 'www'
           
       - name: Deploy to GitHub Pages
         id: deployment
