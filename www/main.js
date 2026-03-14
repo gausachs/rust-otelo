@@ -24,6 +24,8 @@ const cells = [];
 let lang = "en";
 let lastFlips = [];
 let lastMovePlayer = null;
+let flipEndAt = 0;
+let flipTimer = null;
 
 const I18N = {
   ca: {
@@ -226,13 +228,15 @@ function render() {
   const turn = game.side_to_move();
   const flipOrder = new Map();
   lastFlips.forEach((idx, i) => flipOrder.set(idx, i));
+  const now = Date.now();
+  const allowLegalMarkers = now >= flipEndAt;
   // Do not animate the newly placed piece; only flipped ones.
 
   for (let i = 0; i < 64; i++) {
     const cell = cells[i];
     cell.classList.remove("legal", "last");
     cell.innerHTML = "";
-    if (legal[i] === 1 && turn === humanColor) {
+    if (allowLegalMarkers && legal[i] === 1 && turn === humanColor) {
       cell.classList.add("legal");
     }
     if (lastMoveIdx === i) {
@@ -412,4 +416,21 @@ function syncLastMove() {
   lastFlips = game.last_flips();
   const p = game.last_move_player();
   lastMovePlayer = p === 0 || p === 1 ? p : null;
+  if (lastFlips.length > 0) {
+    const baseDelay = 500;
+    const step = 150;
+    const duration = 850;
+    const total =
+      baseDelay + (lastFlips.length - 1) * step + duration + 50;
+    flipEndAt = Date.now() + total;
+    if (flipTimer) {
+      clearTimeout(flipTimer);
+    }
+    flipTimer = setTimeout(() => {
+      render();
+      flipTimer = null;
+    }, total);
+  } else {
+    flipEndAt = 0;
+  }
 }
