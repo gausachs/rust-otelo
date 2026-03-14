@@ -1,0 +1,369 @@
+:root {
+  --bg: #0f1115;
+  --panel: #161922;
+  --panel-2: #1d2230;
+  --text: #f1efe9;
+  --muted: #a7a7a7;
+  --accent: #c9a227;
+  --board-dark: #1f4b3a;
+  --board-light: #2c6a51;
+  --legal: #ffcf5a;
+  --last: #5ac8ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  color: var(--text);
+  background: radial-gradient(1200px 800px at 80% -10%, #2a2f3a 0%, #0f1115 60%);
+  min-height: 100vh;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(9, 10, 13, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 10;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-card {
+  background: var(--panel);
+  border: 1px solid #2b3040;
+  border-radius: 14px;
+  padding: 20px 22px;
+  min-width: 280px;
+  text-align: center;
+}
+
+.modal-card h2 {
+  margin: 0 0 14px 0;
+  font-size: 20px;
+}
+
+.lang-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.lang-grid button {
+  background: var(--panel-2);
+  border: 1px solid #2b3040;
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.title h1 {
+  margin: 0 0 6px 0;
+  font-size: 36px;
+  letter-spacing: 1px;
+}
+
+.title p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.controls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: var(--panel);
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #2b3040;
+}
+
+.controls label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.controls select,
+.controls input[type="range"] {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid #2b3040;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+.controls button {
+  background: var(--accent);
+  border: none;
+  color: #1a1a1a;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.controls .ghost {
+  background: transparent;
+  border: 1px solid #3b4254;
+  color: var(--text);
+}
+
+.controls .check {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: minmax(320px, 620px) 1fr;
+  gap: 24px;
+}
+
+.board-wrap {
+  display: grid;
+  gap: 8px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  gap: 0;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid #2f3d38;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--board-light);
+}
+
+.cell.dark {
+  background: var(--board-dark);
+}
+
+.cell.legal::after {
+  content: "";
+  position: absolute;
+  width: 16%;
+  height: 16%;
+  border-radius: 50%;
+  border: 2px solid var(--legal);
+  opacity: 0.9;
+}
+
+.cell.last::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 2px solid var(--last);
+  border-radius: 8px;
+}
+
+.piece {
+  width: 72%;
+  height: 72%;
+  border-radius: 50%;
+  box-shadow: inset -4px -6px 10px rgba(0, 0, 0, 0.35);
+  transform: rotateY(0deg);
+  will-change: transform;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.piece.black {
+  background: radial-gradient(circle at 30% 30%, #333 0%, #050505 70%);
+}
+
+.piece.white {
+  background: radial-gradient(circle at 30% 30%, #fff 0%, #cfcfcf 70%);
+}
+
+.piece.flip {
+  animation: flip 850ms ease forwards;
+}
+
+@keyframes flip {
+  to {
+    transform: rotateY(180deg);
+  }
+}
+
+.piece .face {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  backface-visibility: hidden;
+  box-shadow: inset -4px -6px 10px rgba(0, 0, 0, 0.35);
+}
+
+.piece .face.black {
+  background: radial-gradient(circle at 30% 30%, #333 0%, #050505 70%);
+}
+
+.piece .face.white {
+  background: radial-gradient(circle at 30% 30%, #fff 0%, #cfcfcf 70%);
+}
+
+.piece .face.back {
+  transform: rotateY(180deg);
+}
+
+
+.board-labels {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  color: var(--muted);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 0 8px;
+}
+
+.panel {
+  background: var(--panel);
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid #2b3040;
+  display: grid;
+  gap: 14px;
+  height: fit-content;
+}
+
+.score {
+  display: grid;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.score strong {
+  margin-left: 8px;
+  font-size: 20px;
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.dot.black {
+  background: #000;
+}
+
+.dot.white {
+  background: #fff;
+  border: 1px solid #999;
+}
+
+.status {
+  padding: 12px;
+  background: var(--panel-2);
+  border-radius: 10px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: var(--text);
+  animation: spin 0.9s linear infinite;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ghost {
+  background: transparent;
+  border: 1px solid #3b4254;
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.legend {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.hint {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin-right: 8px;
+}
+
+.hint.legal {
+  border: 2px solid var(--legal);
+}
+
+.hint.last {
+  border: 2px solid var(--last);
+}
+
+@media (max-width: 900px) {
+  .top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .controls {
+    flex-wrap: wrap;
+  }
+  .main {
+    grid-template-columns: 1fr;
+  }
+}

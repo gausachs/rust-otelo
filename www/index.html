@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Otelo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="lang-modal" class="modal">
+      <div class="modal-card">
+        <h2 data-i18n="choose_language">Choose language</h2>
+        <div class="lang-grid">
+          <button data-lang="ca">Català</button>
+          <button data-lang="pt">Português</button>
+          <button data-lang="fr">Français</button>
+          <button data-lang="en">English</button>
+          <button data-lang="de">Deutsch</button>
+          <button data-lang="it">Italiano</button>
+        </div>
+      </div>
+    </div>
+    <div class="app">
+      <header class="top">
+        <div class="title">
+          <h1>Otelo</h1>
+          <p data-i18n="subtitle">Play against a minimax AI.</p>
+        </div>
+        <div class="controls">
+          <label>
+            <span data-i18n="human_color">Human color</span>
+            <select id="human-color">
+              <option value="0" data-i18n="black">Black</option>
+              <option value="1" data-i18n="white">White</option>
+            </select>
+          </label>
+          <label>
+            <span data-i18n="depth">Depth</span>
+            <input id="depth" type="range" min="2" max="8" step="1" value="6" />
+            <span id="depth-value">6</span>
+          </label>
+          <label class="check">
+            <input id="auto-reset" type="checkbox" />
+            <span data-i18n="auto_reset">Auto-reset</span>
+          </label>
+          <label>
+            <span data-i18n="language">Language</span>
+            <select id="language-select">
+              <option value="ca">Català</option>
+              <option value="pt">Português</option>
+              <option value="fr">Français</option>
+              <option value="en">English</option>
+              <option value="de">Deutsch</option>
+              <option value="it">Italiano</option>
+            </select>
+          </label>
+          <button id="new-game" data-i18n="new_game">New game</button>
+          <button id="swap-sides" class="ghost" data-i18n="swap_sides">Swap sides</button>
+        </div>
+      </header>
+
+      <main class="main">
+        <section class="board-wrap">
+          <div class="board-labels top">
+            <span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span>
+          </div>
+          <div id="board" class="board"></div>
+          <div class="board-labels bottom">
+            <span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span>
+          </div>
+        </section>
+
+        <aside class="panel">
+          <div class="score">
+            <div>
+              <span class="dot black"></span> <span data-i18n="black">Black</span>
+              <strong id="score-black">2</strong>
+            </div>
+            <div>
+              <span class="dot white"></span> <span data-i18n="white">White</span>
+              <strong id="score-white">2</strong>
+            </div>
+          </div>
+          <div id="status" class="status">
+            <span id="status-spinner" class="spinner hidden" aria-hidden="true"></span>
+            <span id="status-text" data-i18n="loading">Loading...</span>
+          </div>
+          <button id="pass" class="ghost" data-i18n="pass">Pass</button>
+          <div class="legend">
+            <div><span class="hint legal"></span> <span data-i18n="legal_move">Legal move</span></div>
+            <div><span class="hint last"></span> <span data-i18n="last_move">Last move</span></div>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
