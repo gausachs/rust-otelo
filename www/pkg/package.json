@@ -1,0 +1,15 @@
+{
+  "name": "otelo",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "otelo_bg.wasm",
+    "otelo.js",
+    "otelo.d.ts"
+  ],
+  "main": "otelo.js",
+  "types": "otelo.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
