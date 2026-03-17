@@ -41,7 +41,8 @@ pub fn best_move_minimax_with_params(
         }
     }
     let mut rng = thread_rng();
-    let choice = best_moves.choose(&mut rng).copied().unwrap_or(0);
+    best_moves.shuffle(&mut rng);
+    let choice = best_moves.first().copied().unwrap_or(0);
     (choice, best_score)
 }
 

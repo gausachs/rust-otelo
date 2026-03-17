@@ -10,8 +10,6 @@ const depthEl = document.getElementById("depth");
 const depthValueEl = document.getElementById("depth-value");
 const humanColorEl = document.getElementById("human-color");
 const newGameEl = document.getElementById("new-game");
-const swapSidesEl = document.getElementById("swap-sides");
-const autoResetEl = document.getElementById("auto-reset");
 const passEl = document.getElementById("pass");
 const langModalEl = document.getElementById("lang-modal");
 const langButtons = Array.from(langModalEl.querySelectorAll("button[data-lang]"));
@@ -43,10 +41,8 @@ const I18N = {
     black: "Negre",
     white: "Blanc",
     depth: "Dificultat/Profunditat",
-    auto_reset: "Auto-reinicia",
     language: "Idioma",
     new_game: "Nova partida",
-    swap_sides: "Canvia bàndol",
     loading: "Carregant...",
     pass: "Passar",
     legal_move: "Moviment legal",
@@ -56,7 +52,7 @@ const I18N = {
     ai_turn: "Torn de la IA ({color}). Material: {eval}",
     ai_thinking: "La IA està pensant...",
     confirm_new_game: "Vols començar una nova partida?",
-    confirm_swap_sides: "Vols canviar de bàndol?",
+    confirm_swap_sides: "Vols canviar el color humà?",
     confirm_title: "Confirmació",
     confirm_ok: "D'acord",
     confirm_cancel: "Cancel·la",
@@ -70,10 +66,8 @@ const I18N = {
     black: "Preto",
     white: "Branco",
     depth: "Dificuldade/Profundidade",
-    auto_reset: "Reinício auto",
     language: "Idioma",
     new_game: "Novo jogo",
-    swap_sides: "Trocar lados",
     loading: "A carregar...",
     pass: "Passar",
     legal_move: "Jogada legal",
@@ -83,7 +77,7 @@ const I18N = {
     ai_turn: "Vez da IA ({color}). Material: {eval}",
     ai_thinking: "A IA está a pensar...",
     confirm_new_game: "Queres começar um novo jogo?",
-    confirm_swap_sides: "Queres trocar de lado?",
+    confirm_swap_sides: "Queres mudar a cor humana?",
     confirm_title: "Confirmação",
     confirm_ok: "OK",
     confirm_cancel: "Cancelar",
@@ -97,10 +91,8 @@ const I18N = {
     black: "Noir",
     white: "Blanc",
     depth: "Difficulté/Profondeur",
-    auto_reset: "Réinit auto",
     language: "Langue",
     new_game: "Nouvelle partie",
-    swap_sides: "Changer de camp",
     loading: "Chargement...",
     pass: "Passer",
     legal_move: "Coup légal",
@@ -110,7 +102,7 @@ const I18N = {
     ai_turn: "Tour de l'IA ({color}). Matériel : {eval}",
     ai_thinking: "L'IA réfléchit...",
     confirm_new_game: "Voulez-vous commencer une nouvelle partie ?",
-    confirm_swap_sides: "Voulez-vous changer de camp ?",
+    confirm_swap_sides: "Voulez-vous changer la couleur humaine ?",
     confirm_title: "Confirmation",
     confirm_ok: "OK",
     confirm_cancel: "Annuler",
@@ -124,10 +116,8 @@ const I18N = {
     black: "Black",
     white: "White",
     depth: "Difficulty/Depth",
-    auto_reset: "Auto-reset",
     language: "Language",
     new_game: "New game",
-    swap_sides: "Swap sides",
     loading: "Loading...",
     pass: "Pass",
     legal_move: "Legal move",
@@ -137,7 +127,7 @@ const I18N = {
     ai_turn: "AI turn ({color}). Material: {eval}",
     ai_thinking: "AI is thinking...",
     confirm_new_game: "Start a new game?",
-    confirm_swap_sides: "Swap sides?",
+    confirm_swap_sides: "Change human color?",
     confirm_title: "Confirm",
     confirm_ok: "OK",
     confirm_cancel: "Cancel",
@@ -151,10 +141,8 @@ const I18N = {
     black: "Schwarz",
     white: "Weiß",
     depth: "Schwierigkeit/Tiefe",
-    auto_reset: "Auto-Reset",
     language: "Sprache",
     new_game: "Neues Spiel",
-    swap_sides: "Seiten wechseln",
     loading: "Laden...",
     pass: "Passen",
     legal_move: "Legaler Zug",
@@ -164,7 +152,7 @@ const I18N = {
     ai_turn: "KI ist dran ({color}). Material: {eval}",
     ai_thinking: "KI denkt nach...",
     confirm_new_game: "Neues Spiel starten?",
-    confirm_swap_sides: "Seiten wechseln?",
+    confirm_swap_sides: "Menschliche Farbe ändern?",
     confirm_title: "Bestätigen",
     confirm_ok: "OK",
     confirm_cancel: "Abbrechen",
@@ -178,10 +166,8 @@ const I18N = {
     black: "Nero",
     white: "Bianco",
     depth: "Difficoltà/Profondità",
-    auto_reset: "Auto-reset",
     language: "Lingua",
     new_game: "Nuova partita",
-    swap_sides: "Cambia lato",
     loading: "Caricamento...",
     pass: "Passa",
     legal_move: "Mossa legale",
@@ -191,7 +177,7 @@ const I18N = {
     ai_turn: "Turno IA ({color}). Materiale: {eval}",
     ai_thinking: "L'IA sta pensando...",
     confirm_new_game: "Vuoi iniziare una nuova partita?",
-    confirm_swap_sides: "Vuoi cambiare lato?",
+    confirm_swap_sides: "Vuoi cambiare il colore umano?",
     confirm_title: "Conferma",
     confirm_ok: "OK",
     confirm_cancel: "Annulla",
@@ -305,9 +291,7 @@ function render() {
     const evalScore = game.material_eval_for_human();
     setStatus(t("game_over", { eval: evalScore }), false);
     passEl.disabled = true;
-    if (autoResetEl.checked) {
-      setTimeout(() => resetGame(), 600);
-    }
+    // No auto-reset.
     return;
   }
 
@@ -400,22 +384,13 @@ function hookControls() {
     depthValueEl.textContent = depthEl.value;
     if (game) game.set_depth(Number(depthEl.value));
   });
-  autoResetEl.addEventListener("change", () => {
-    render();
-  });
   newGameEl.addEventListener("click", () => {
     showConfirm(t("confirm_new_game"), () => resetGame());
   });
-  humanColorEl.addEventListener("change", (e) => {
-    // Prevent changing from the dropdown; use "Swap sides" button instead.
-    humanColorEl.value = String(humanColor);
-    e.preventDefault();
-  });
-  swapSidesEl.addEventListener("click", () => {
+  humanColorEl.addEventListener("change", () => {
     if (!game) return;
     showConfirm(t("confirm_swap_sides"), () => {
-      humanColor = humanColor === 0 ? 1 : 0;
-      humanColorEl.value = String(humanColor);
+      humanColor = Number(humanColorEl.value);
       game.set_human_color(humanColor);
       render();
       maybeAiMove();

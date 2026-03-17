@@ -39,7 +39,7 @@
         <div class="controls">
           <label>
             <span data-i18n="human_color">Human color</span>
-            <select id="human-color" disabled>
+            <select id="human-color">
               <option value="0" data-i18n="black">Black</option>
               <option value="1" data-i18n="white">White</option>
             </select>
@@ -48,10 +48,6 @@
             <span data-i18n="depth">Depth</span>
             <input id="depth" type="range" min="2" max="8" step="1" value="6" />
             <span id="depth-value">6</span>
-          </label>
-          <label class="check">
-            <input id="auto-reset" type="checkbox" />
-            <span data-i18n="auto_reset">Auto-reset</span>
           </label>
           <label>
             <span data-i18n="language">Language</span>
@@ -65,7 +61,6 @@
             </select>
           </label>
           <button id="new-game" data-i18n="new_game">New game</button>
-          <button id="swap-sides" class="ghost" data-i18n="swap_sides">Swap sides</button>
         </div>
       </header>
 
