@@ -175,7 +175,7 @@ mod tests {
     #[test]
     fn apply_move_flips_one() {
         let mut b = Board::new();
-        let mv = parse_square("c4").unwrap();
+        let mv = parse_square("c5").unwrap();
         b.apply_move(mv).unwrap();
         assert_eq!(b.count(Color::Black), 4);
         assert_eq!(b.count(Color::White), 1);

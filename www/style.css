@@ -67,6 +67,32 @@ body {
   font-weight: 600;
 }
 
+.confirm-card {
+  max-width: 360px;
+  text-align: left;
+}
+
+.confirm-card h2 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+
+.confirm-card p {
+  margin: 0 0 16px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.confirm-actions button {
+  min-width: 96px;
+}
+
 .app {
   max-width: 1100px;
   margin: 0 auto;
@@ -337,6 +363,13 @@ body {
   gap: 6px;
   color: var(--muted);
   font-size: 13px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: right;
 }
 
 .hint {

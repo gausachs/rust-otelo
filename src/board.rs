@@ -19,10 +19,10 @@ pub struct EvalParams {
 }
 
 pub const DEFAULT_EVAL_PARAMS: EvalParams = EvalParams {
-    material_scale: 90,
-    mobility_scale: 120,
-    mobility_penalty_scale: 140,
-    pst_scale: 110,
+    material_scale: 85,
+    mobility_scale: 130,
+    mobility_penalty_scale: 150,
+    pst_scale: 120,
 };
 
 impl Board {
@@ -54,6 +54,14 @@ impl Board {
             Color::Black => self.black,
             Color::White => self.white,
         }
+    }
+
+    pub fn hash(self) -> u128 {
+        let side = match self.side_to_move {
+            Color::Black => 0u128,
+            Color::White => 1u128,
+        };
+        (self.black as u128) | ((self.white as u128) << 64) | (side << 127)
     }
 
     pub fn count(self, c: Color) -> u32 {

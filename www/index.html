@@ -20,6 +20,16 @@
         </div>
       </div>
     </div>
+    <div id="confirm-modal" class="modal hidden">
+      <div class="modal-card confirm-card">
+        <h2 id="confirm-title">Confirm</h2>
+        <p id="confirm-message">Are you sure?</p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel" class="ghost">Cancel</button>
+          <button id="confirm-ok">OK</button>
+        </div>
+      </div>
+    </div>
     <div class="app">
       <header class="top">
         <div class="title">
@@ -29,7 +39,7 @@
         <div class="controls">
           <label>
             <span data-i18n="human_color">Human color</span>
-            <select id="human-color">
+            <select id="human-color" disabled>
               <option value="0" data-i18n="black">Black</option>
               <option value="1" data-i18n="white">White</option>
             </select>
@@ -90,10 +100,11 @@
             <div><span class="hint legal"></span> <span data-i18n="legal_move">Legal move</span></div>
             <div><span class="hint last"></span> <span data-i18n="last_move">Last move</span></div>
           </div>
+          <div class="meta">v1.1 · JAP</div>
         </aside>
       </main>
     </div>
 
-    <script type="module" src="main.js"></script>
+    <script type="module" src="main.js?v=8"></script>
   </body>
 </html>

@@ -14,6 +14,7 @@ export class Game {
     last_move_player(): number;
     legal_move_evals(): Int32Array;
     legal_moves(): Uint8Array;
+    material_eval_for_human(): number;
     constructor(human_color: number, depth: number);
     pass(): void;
     reset(human_color: number): void;
@@ -39,6 +40,7 @@ export interface InitOutput {
     readonly game_last_move_player: (a: number) => number;
     readonly game_legal_move_evals: (a: number) => [number, number];
     readonly game_legal_moves: (a: number) => [number, number];
+    readonly game_material_eval_for_human: (a: number) => number;
     readonly game_new: (a: number, b: number) => [number, number, number];
     readonly game_pass: (a: number) => [number, number];
     readonly game_reset: (a: number, b: number) => [number, number];
@@ -47,6 +49,8 @@ export interface InitOutput {
     readonly game_set_depth: (a: number, b: number) => void;
     readonly game_set_human_color: (a: number, b: number) => [number, number];
     readonly game_side_to_move: (a: number) => number;
+    readonly __wbindgen_exn_store: (a: number) => void;
+    readonly __externref_table_alloc: () => number;
     readonly __wbindgen_externrefs: WebAssembly.Table;
     readonly __externref_table_dealloc: (a: number) => void;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;

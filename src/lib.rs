@@ -4,9 +4,9 @@ mod board;
 
 use wasm_bindgen::prelude::*;
 
-use crate::ai::best_move_minimax;
+use crate::ai::best_move_iterative_with_params;
 use crate::bitboard::{bit_at, Color};
-use crate::board::Board;
+use crate::board::{Board, DEFAULT_EVAL_PARAMS};
 
 fn color_from_u8(v: u8) -> Result<Color, JsValue> {
     match v {
@@ -171,7 +171,8 @@ impl Game {
             self.last_move_player = 255;
             return Ok(64);
         }
-        let (best, _score) = best_move_minimax(self.board, self.ai, self.depth);
+        let (best, _score) =
+            best_move_iterative_with_params(self.board, self.ai, self.depth, DEFAULT_EVAL_PARAMS);
         let player = self.board.side_to_move;
         let opp = player.opponent();
         let before_opp = self.board.pieces(opp);
@@ -201,6 +202,15 @@ impl Game {
 
     pub fn eval_for_human(&self) -> i32 {
         self.board.evaluate(self.human)
+    }
+
+    pub fn material_eval_for_human(&self) -> i32 {
+        let my = self.board.pieces(self.human).count_ones() as i32;
+        let opp = self
+            .board
+            .pieces(self.human.opponent())
+            .count_ones() as i32;
+        my - opp
     }
 
     pub fn last_move_idx(&self) -> u32 {

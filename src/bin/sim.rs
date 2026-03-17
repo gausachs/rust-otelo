@@ -1,7 +1,10 @@
+#[allow(dead_code)]
 #[path = "../ai.rs"]
 mod ai;
+#[allow(dead_code)]
 #[path = "../bitboard.rs"]
 mod bitboard;
+#[allow(dead_code)]
 #[path = "../board.rs"]
 mod board;
 

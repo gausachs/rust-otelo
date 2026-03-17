@@ -1,4 +1,4 @@
-import init, { Game } from "./pkg/otelo.js";
+const WASM_VERSION = "v8";
 
 const boardEl = document.getElementById("board");
 const statusEl = document.getElementById("status");
@@ -16,6 +16,11 @@ const passEl = document.getElementById("pass");
 const langModalEl = document.getElementById("lang-modal");
 const langButtons = Array.from(langModalEl.querySelectorAll("button[data-lang]"));
 const languageSelectEl = document.getElementById("language-select");
+const confirmModalEl = document.getElementById("confirm-modal");
+const confirmTitleEl = document.getElementById("confirm-title");
+const confirmMessageEl = document.getElementById("confirm-message");
+const confirmCancelEl = document.getElementById("confirm-cancel");
+const confirmOkEl = document.getElementById("confirm-ok");
 
 let game = null;
 let humanColor = 0;
@@ -26,6 +31,9 @@ let lastFlips = [];
 let lastMovePlayer = null;
 let flipEndAt = 0;
 let flipTimer = null;
+const AI_THINK_START_DELAY = 100;
+const AI_THINK_DELAY = 1200;
+let pendingConfirm = null;
 
 const I18N = {
   ca: {
@@ -34,7 +42,7 @@ const I18N = {
     human_color: "Color humà",
     black: "Negre",
     white: "Blanc",
-    depth: "Profunditat",
+    depth: "Dificultat/Profunditat",
     auto_reset: "Auto-reinicia",
     language: "Idioma",
     new_game: "Nova partida",
@@ -43,10 +51,15 @@ const I18N = {
     pass: "Passar",
     legal_move: "Moviment legal",
     last_move: "Últim moviment",
-    game_over: "Partida acabada. Avaluació per l'humà: {eval}",
-    your_turn: "El teu torn ({color}). Avaluació: {eval}",
-    ai_turn: "Torn de la IA ({color}). Avaluació: {eval}",
+    game_over: "Partida acabada. Material per l'humà: {eval}",
+    your_turn: "El teu torn ({color}). Material: {eval}",
+    ai_turn: "Torn de la IA ({color}). Material: {eval}",
     ai_thinking: "La IA està pensant...",
+    confirm_new_game: "Vols començar una nova partida?",
+    confirm_swap_sides: "Vols canviar de bàndol?",
+    confirm_title: "Confirmació",
+    confirm_ok: "D'acord",
+    confirm_cancel: "Cancel·la",
     no_legal: "No hi ha moviments legals. Passes.",
     not_allowed: "Passar no està permès.",
   },
@@ -56,7 +69,7 @@ const I18N = {
     human_color: "Cor humana",
     black: "Preto",
     white: "Branco",
-    depth: "Profundidade",
+    depth: "Dificuldade/Profundidade",
     auto_reset: "Reinício auto",
     language: "Idioma",
     new_game: "Novo jogo",
@@ -65,10 +78,15 @@ const I18N = {
     pass: "Passar",
     legal_move: "Jogada legal",
     last_move: "Última jogada",
-    game_over: "Fim de jogo. Avaliação para o humano: {eval}",
-    your_turn: "A tua vez ({color}). Avaliação: {eval}",
-    ai_turn: "Vez da IA ({color}). Avaliação: {eval}",
+    game_over: "Fim de jogo. Material para o humano: {eval}",
+    your_turn: "A tua vez ({color}). Material: {eval}",
+    ai_turn: "Vez da IA ({color}). Material: {eval}",
     ai_thinking: "A IA está a pensar...",
+    confirm_new_game: "Queres começar um novo jogo?",
+    confirm_swap_sides: "Queres trocar de lado?",
+    confirm_title: "Confirmação",
+    confirm_ok: "OK",
+    confirm_cancel: "Cancelar",
     no_legal: "Sem jogadas legais. Passa.",
     not_allowed: "Passar não é permitido.",
   },
@@ -78,7 +96,7 @@ const I18N = {
     human_color: "Couleur humaine",
     black: "Noir",
     white: "Blanc",
-    depth: "Profondeur",
+    depth: "Difficulté/Profondeur",
     auto_reset: "Réinit auto",
     language: "Langue",
     new_game: "Nouvelle partie",
@@ -87,10 +105,15 @@ const I18N = {
     pass: "Passer",
     legal_move: "Coup légal",
     last_move: "Dernier coup",
-    game_over: "Partie terminée. Évaluation pour l'humain : {eval}",
-    your_turn: "Votre tour ({color}). Évaluation : {eval}",
-    ai_turn: "Tour de l'IA ({color}). Évaluation : {eval}",
+    game_over: "Partie terminée. Matériel pour l'humain : {eval}",
+    your_turn: "Votre tour ({color}). Matériel : {eval}",
+    ai_turn: "Tour de l'IA ({color}). Matériel : {eval}",
     ai_thinking: "L'IA réfléchit...",
+    confirm_new_game: "Voulez-vous commencer une nouvelle partie ?",
+    confirm_swap_sides: "Voulez-vous changer de camp ?",
+    confirm_title: "Confirmation",
+    confirm_ok: "OK",
+    confirm_cancel: "Annuler",
     no_legal: "Aucun coup légal. Passe.",
     not_allowed: "Passer n'est pas autorisé.",
   },
@@ -100,7 +123,7 @@ const I18N = {
     human_color: "Human color",
     black: "Black",
     white: "White",
-    depth: "Depth",
+    depth: "Difficulty/Depth",
     auto_reset: "Auto-reset",
     language: "Language",
     new_game: "New game",
@@ -109,10 +132,15 @@ const I18N = {
     pass: "Pass",
     legal_move: "Legal move",
     last_move: "Last move",
-    game_over: "Game over. Eval for human: {eval}",
-    your_turn: "Your turn ({color}). Eval: {eval}",
-    ai_turn: "AI turn ({color}). Eval: {eval}",
+    game_over: "Game over. Material for human: {eval}",
+    your_turn: "Your turn ({color}). Material: {eval}",
+    ai_turn: "AI turn ({color}). Material: {eval}",
     ai_thinking: "AI is thinking...",
+    confirm_new_game: "Start a new game?",
+    confirm_swap_sides: "Swap sides?",
+    confirm_title: "Confirm",
+    confirm_ok: "OK",
+    confirm_cancel: "Cancel",
     no_legal: "No legal moves. Pass.",
     not_allowed: "Pass not allowed.",
   },
@@ -122,7 +150,7 @@ const I18N = {
     human_color: "Menschliche Farbe",
     black: "Schwarz",
     white: "Weiß",
-    depth: "Tiefe",
+    depth: "Schwierigkeit/Tiefe",
     auto_reset: "Auto-Reset",
     language: "Sprache",
     new_game: "Neues Spiel",
@@ -131,10 +159,15 @@ const I18N = {
     pass: "Passen",
     legal_move: "Legaler Zug",
     last_move: "Letzter Zug",
-    game_over: "Spiel vorbei. Bewertung für den Menschen: {eval}",
-    your_turn: "Du bist dran ({color}). Bewertung: {eval}",
-    ai_turn: "KI ist dran ({color}). Bewertung: {eval}",
+    game_over: "Spiel vorbei. Material für den Menschen: {eval}",
+    your_turn: "Du bist dran ({color}). Material: {eval}",
+    ai_turn: "KI ist dran ({color}). Material: {eval}",
     ai_thinking: "KI denkt nach...",
+    confirm_new_game: "Neues Spiel starten?",
+    confirm_swap_sides: "Seiten wechseln?",
+    confirm_title: "Bestätigen",
+    confirm_ok: "OK",
+    confirm_cancel: "Abbrechen",
     no_legal: "Keine legalen Züge. Passe.",
     not_allowed: "Passen ist nicht erlaubt.",
   },
@@ -144,7 +177,7 @@ const I18N = {
     human_color: "Colore umano",
     black: "Nero",
     white: "Bianco",
-    depth: "Profondità",
+    depth: "Difficoltà/Profondità",
     auto_reset: "Auto-reset",
     language: "Lingua",
     new_game: "Nuova partita",
@@ -153,10 +186,15 @@ const I18N = {
     pass: "Passa",
     legal_move: "Mossa legale",
     last_move: "Ultima mossa",
-    game_over: "Partita finita. Valutazione per l'umano: {eval}",
-    your_turn: "Il tuo turno ({color}). Valutazione: {eval}",
-    ai_turn: "Turno IA ({color}). Valutazione: {eval}",
+    game_over: "Partita finita. Materiale per l'umano: {eval}",
+    your_turn: "Il tuo turno ({color}). Materiale: {eval}",
+    ai_turn: "Turno IA ({color}). Materiale: {eval}",
     ai_thinking: "L'IA sta pensando...",
+    confirm_new_game: "Vuoi iniziare una nuova partita?",
+    confirm_swap_sides: "Vuoi cambiare lato?",
+    confirm_title: "Conferma",
+    confirm_ok: "OK",
+    confirm_cancel: "Annulla",
     no_legal: "Nessuna mossa legale. Passa.",
     not_allowed: "Passare non è permesso.",
   },
@@ -182,6 +220,9 @@ function applyI18n() {
     }
   });
   document.documentElement.lang = lang;
+  confirmTitleEl.textContent = t("confirm_title");
+  confirmCancelEl.textContent = t("confirm_cancel");
+  confirmOkEl.textContent = t("confirm_ok");
 }
 
 function setLanguage(next) {
@@ -261,7 +302,7 @@ function render() {
   scoreWhiteEl.textContent = String(game.score_white());
 
   if (game.is_game_over()) {
-    const evalScore = game.eval_for_human();
+    const evalScore = game.material_eval_for_human();
     setStatus(t("game_over", { eval: evalScore }), false);
     passEl.disabled = true;
     if (autoResetEl.checked) {
@@ -270,13 +311,13 @@ function render() {
     return;
   }
 
-  const turnName = turn === 0 ? "Black" : "White";
   const turnNameLocalized = t(turn === 0 ? "black" : "white");
-  const evalScore = game.eval_for_human();
+  const evalScore = game.material_eval_for_human();
   if (turn === humanColor) {
     setStatus(t("your_turn", { color: turnNameLocalized, eval: evalScore }), false);
   } else {
-    setStatus(t("ai_turn", { color: turnNameLocalized, eval: evalScore }), false);
+    // Always show spinner on AI turn.
+    setStatus(t("ai_thinking"), true);
   }
 
   const legalCount = legal.reduce((a, b) => a + b, 0);
@@ -322,19 +363,25 @@ function maybeAiMove() {
   if (!game) return;
   if (game.is_game_over()) return;
   if (game.side_to_move() === humanColor) return;
-  setStatus(t("ai_thinking"), true);
   setTimeout(() => {
-    try {
-      const idx = game.ai_move();
-      syncLastMove();
-    } catch (err) {
-      setStatus(String(err), false);
+    if (!game) return;
+    if (game.is_game_over() || game.side_to_move() === humanColor) {
+      return;
     }
-    render();
-    if (game.side_to_move() !== humanColor) {
-      maybeAiMove();
-    }
-  }, 2000);
+    setStatus(t("ai_thinking"), true);
+    setTimeout(() => {
+      try {
+        const idx = game.ai_move();
+        syncLastMove();
+      } catch (err) {
+        setStatus(String(err), false);
+      }
+      render();
+      if (game.side_to_move() !== humanColor) {
+        maybeAiMove();
+      }
+    }, 0);
+  }, AI_THINK_DELAY);
 }
 
 function resetGame() {
@@ -343,8 +390,8 @@ function resetGame() {
   lastFlips = [];
   game.reset(humanColor);
   game.set_depth(Number(depthEl.value));
+  aiPending = false;
   render();
-  maybeAiMove();
 }
 
 function hookControls() {
@@ -356,15 +403,23 @@ function hookControls() {
   autoResetEl.addEventListener("change", () => {
     render();
   });
-  newGameEl.addEventListener("click", resetGame);
-  humanColorEl.addEventListener("change", resetGame);
+  newGameEl.addEventListener("click", () => {
+    showConfirm(t("confirm_new_game"), () => resetGame());
+  });
+  humanColorEl.addEventListener("change", (e) => {
+    // Prevent changing from the dropdown; use "Swap sides" button instead.
+    humanColorEl.value = String(humanColor);
+    e.preventDefault();
+  });
   swapSidesEl.addEventListener("click", () => {
     if (!game) return;
-    humanColor = humanColor === 0 ? 1 : 0;
-    humanColorEl.value = String(humanColor);
-    game.set_human_color(humanColor);
-    render();
-    maybeAiMove();
+    showConfirm(t("confirm_swap_sides"), () => {
+      humanColor = humanColor === 0 ? 1 : 0;
+      humanColorEl.value = String(humanColor);
+      game.set_human_color(humanColor);
+      render();
+      maybeAiMove();
+    });
   });
   passEl.addEventListener("click", () => {
     if (!game) return;
@@ -391,13 +446,27 @@ function hookLanguagePicker() {
   });
 }
 
+function showConfirm(message, onOk) {
+  confirmMessageEl.textContent = message;
+  confirmModalEl.classList.remove("hidden");
+  pendingConfirm = onOk;
+}
+
+function closeConfirm() {
+  confirmModalEl.classList.add("hidden");
+  pendingConfirm = null;
+}
+
 async function initGame() {
   buildBoard();
   hookControls();
   depthValueEl.textContent = depthEl.value;
-  await init();
+  const wasm = await import(`./pkg/otelo.js?${WASM_VERSION}`);
+  await wasm.default({
+    module_or_path: new URL(`./pkg/otelo_bg.wasm?${WASM_VERSION}`, import.meta.url),
+  });
   humanColor = Number(humanColorEl.value);
-  game = new Game(humanColor, Number(depthEl.value));
+  game = new wasm.Game(humanColor, Number(depthEl.value));
   syncLastMove();
   render();
   maybeAiMove();
@@ -407,6 +476,12 @@ applyI18n();
 hookLanguagePicker();
 languageSelectEl.addEventListener("change", () => {
   setLanguage(languageSelectEl.value || "en");
+});
+confirmCancelEl.addEventListener("click", closeConfirm);
+confirmOkEl.addEventListener("click", () => {
+  const cb = pendingConfirm;
+  closeConfirm();
+  if (cb) cb();
 });
 
 function syncLastMove() {
