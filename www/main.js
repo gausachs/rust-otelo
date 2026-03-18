@@ -374,8 +374,9 @@ function resetGame() {
   lastFlips = [];
   game.reset(humanColor);
   game.set_depth(Number(depthEl.value));
-  aiPending = false;
+  syncLastMove();
   render();
+  maybeAiMove();
 }
 
 function hookControls() {
@@ -457,6 +458,11 @@ confirmOkEl.addEventListener("click", () => {
   const cb = pendingConfirm;
   closeConfirm();
   if (cb) cb();
+});
+confirmModalEl.addEventListener("click", (e) => {
+  if (e.target === confirmModalEl) {
+    closeConfirm();
+  }
 });
 
 function syncLastMove() {
