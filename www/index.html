@@ -8,7 +8,7 @@
   </head>
   <body>
     <div id="lang-modal" class="modal">
-      <div class="modal-card">
+      <div class="modal-card setup-card">
         <h2 data-i18n="choose_language">Choose language</h2>
         <div class="lang-grid">
           <button data-lang="ca">Català</button>
@@ -18,6 +18,21 @@
           <button data-lang="de">Deutsch</button>
           <button data-lang="it">Italiano</button>
         </div>
+        <div class="setup-options">
+          <label>
+            <span data-i18n="human_color">Human color</span>
+            <select id="setup-human-color">
+              <option value="0" data-i18n="black">Black</option>
+              <option value="1" data-i18n="white">White</option>
+            </select>
+          </label>
+          <label>
+            <span data-i18n="depth">Difficulty/Depth</span>
+            <input id="setup-depth" type="range" min="2" max="8" step="1" value="6" />
+            <span id="setup-depth-value">6</span>
+          </label>
+        </div>
+        <button id="setup-start" class="start-btn" data-i18n="start_game">Start</button>
       </div>
     </div>
     <div id="confirm-modal" class="modal hidden">

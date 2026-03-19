@@ -67,6 +67,42 @@ body {
   font-weight: 600;
 }
 
+.setup-card {
+  text-align: left;
+  max-width: 420px;
+}
+
+.setup-options {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.setup-options label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.setup-options input[type="range"] {
+  min-width: 160px;
+}
+
+.start-btn {
+  margin-top: 16px;
+  width: 100%;
+  background: var(--accent);
+  border: none;
+  color: #1a1a1a;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
 .confirm-card {
   max-width: 360px;
   text-align: left;

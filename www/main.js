@@ -14,6 +14,10 @@ const passEl = document.getElementById("pass");
 const langModalEl = document.getElementById("lang-modal");
 const langButtons = Array.from(langModalEl.querySelectorAll("button[data-lang]"));
 const languageSelectEl = document.getElementById("language-select");
+const setupHumanColorEl = document.getElementById("setup-human-color");
+const setupDepthEl = document.getElementById("setup-depth");
+const setupDepthValueEl = document.getElementById("setup-depth-value");
+const setupStartEl = document.getElementById("setup-start");
 const confirmModalEl = document.getElementById("confirm-modal");
 const confirmTitleEl = document.getElementById("confirm-title");
 const confirmMessageEl = document.getElementById("confirm-message");
@@ -24,7 +28,7 @@ let game = null;
 let humanColor = 0;
 let lastMoveIdx = null;
 const cells = [];
-let lang = "en";
+let lang = "ca";
 let lastFlips = [];
 let lastMovePlayer = null;
 let flipEndAt = 0;
@@ -56,6 +60,7 @@ const I18N = {
     confirm_title: "Confirmació",
     confirm_ok: "D'acord",
     confirm_cancel: "Cancel·la",
+    start_game: "Comença",
     no_legal: "No hi ha moviments legals. Passes.",
     not_allowed: "Passar no està permès.",
   },
@@ -81,6 +86,7 @@ const I18N = {
     confirm_title: "Confirmação",
     confirm_ok: "OK",
     confirm_cancel: "Cancelar",
+    start_game: "Começar",
     no_legal: "Sem jogadas legais. Passa.",
     not_allowed: "Passar não é permitido.",
   },
@@ -106,6 +112,7 @@ const I18N = {
     confirm_title: "Confirmation",
     confirm_ok: "OK",
     confirm_cancel: "Annuler",
+    start_game: "Commencer",
     no_legal: "Aucun coup légal. Passe.",
     not_allowed: "Passer n'est pas autorisé.",
   },
@@ -131,6 +138,7 @@ const I18N = {
     confirm_title: "Confirm",
     confirm_ok: "OK",
     confirm_cancel: "Cancel",
+    start_game: "Start",
     no_legal: "No legal moves. Pass.",
     not_allowed: "Pass not allowed.",
   },
@@ -156,6 +164,7 @@ const I18N = {
     confirm_title: "Bestätigen",
     confirm_ok: "OK",
     confirm_cancel: "Abbrechen",
+    start_game: "Starten",
     no_legal: "Keine legalen Züge. Passe.",
     not_allowed: "Passen ist nicht erlaubt.",
   },
@@ -181,6 +190,7 @@ const I18N = {
     confirm_title: "Conferma",
     confirm_ok: "OK",
     confirm_cancel: "Annulla",
+    start_game: "Inizia",
     no_legal: "Nessuna mossa legale. Passa.",
     not_allowed: "Passare non è permesso.",
   },
@@ -209,6 +219,7 @@ function applyI18n() {
   confirmTitleEl.textContent = t("confirm_title");
   confirmCancelEl.textContent = t("confirm_cancel");
   confirmOkEl.textContent = t("confirm_ok");
+  setupStartEl.textContent = t("start_game");
 }
 
 function setLanguage(next) {
@@ -414,10 +425,6 @@ function hookLanguagePicker() {
   langButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       setLanguage(btn.dataset.lang || "en");
-      langModalEl.classList.add("hidden");
-      if (!game) {
-        initGame();
-      }
     });
   });
 }
@@ -450,6 +457,25 @@ async function initGame() {
 
 applyI18n();
 hookLanguagePicker();
+setupDepthValueEl.textContent = setupDepthEl.value;
+setupDepthEl.addEventListener("input", () => {
+  setupDepthValueEl.textContent = setupDepthEl.value;
+});
+setupStartEl.addEventListener("click", () => {
+  humanColorEl.value = setupHumanColorEl.value;
+  depthEl.value = setupDepthEl.value;
+  depthValueEl.textContent = depthEl.value;
+  langModalEl.classList.add("hidden");
+  if (!game) {
+    initGame();
+  } else {
+    humanColor = Number(humanColorEl.value);
+    game.set_human_color(humanColor);
+    game.set_depth(Number(depthEl.value));
+    render();
+    maybeAiMove();
+  }
+});
 languageSelectEl.addEventListener("change", () => {
   setLanguage(languageSelectEl.value || "en");
 });
