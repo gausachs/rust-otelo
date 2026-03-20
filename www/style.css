@@ -85,10 +85,16 @@ body {
   justify-content: space-between;
   color: var(--muted);
   font-size: 14px;
+  flex-wrap: wrap;
 }
 
 .setup-options input[type="range"] {
   min-width: 160px;
+}
+
+#setup-depth-value {
+  min-width: 24px;
+  text-align: right;
 }
 
 .start-btn {
