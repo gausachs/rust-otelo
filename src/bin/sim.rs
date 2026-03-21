@@ -18,6 +18,7 @@ fn main() {
     let games = arg_i32("--games", 20);
     let depth = arg_i32("--depth", 4);
     let rand_plies = arg_i32("--rand-plies", 4).max(0) as u32;
+    let progress_every = arg_i32("--progress", 10).max(1);
     if has_flag("--help") || has_flag("-h") {
         print_help();
         return;
@@ -76,6 +77,17 @@ fn main() {
         } else {
             draws += 1;
         }
+
+        if (g + 1) % progress_every == 0 || g + 1 == games {
+            println!(
+                "Progress: {}/{} | A: {} B: {} D: {}",
+                g + 1,
+                games,
+                a_wins,
+                b_wins,
+                draws
+            );
+        }
     }
 
     println!("Games: {}", games);
@@ -108,6 +120,7 @@ fn print_help() {
     println!("  --games N        Number of games (default: 20)");
     println!("  --depth N        Minimax depth (default: 4)");
     println!("  --rand-plies N   Random opening plies (default: 4)");
+    println!("  --progress N    Print progress every N games (default: 10)");
     println!();
     println!("B (custom) evaluation scales (percent, default: 100):");
     println!("  --material N     Material scale");

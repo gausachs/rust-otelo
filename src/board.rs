@@ -19,9 +19,9 @@ pub struct EvalParams {
 }
 
 pub const DEFAULT_EVAL_PARAMS: EvalParams = EvalParams {
-    material_scale: 85,
-    mobility_scale: 130,
-    mobility_penalty_scale: 150,
+    material_scale: 80,
+    mobility_scale: 150,
+    mobility_penalty_scale: 170,
     pst_scale: 120,
 };
 

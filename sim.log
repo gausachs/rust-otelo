@@ -1,0 +1,2 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running `target/debug/sim --games 200 --depth 6 --rand-plies 8 --progress 20 --material 80 --mobility 150 --penalty 170 --pst 120`
