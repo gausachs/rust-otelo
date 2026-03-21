@@ -171,8 +171,9 @@ impl Game {
             self.last_move_player = 255;
             return Ok(64);
         }
+        let depth = adjusted_ai_depth(self.board, self.ai, self.depth);
         let (best, _score) =
-            best_move_iterative_with_params(self.board, self.ai, self.depth, DEFAULT_EVAL_PARAMS);
+            best_move_iterative_with_params(self.board, self.ai, depth, DEFAULT_EVAL_PARAMS);
         let player = self.board.side_to_move;
         let opp = player.opponent();
         let before_opp = self.board.pieces(opp);
@@ -224,6 +225,24 @@ impl Game {
     pub fn last_move_player(&self) -> u8 {
         self.last_move_player
     }
+}
+
+fn adjusted_ai_depth(board: Board, ai: Color, base_depth: i32) -> i32 {
+    if base_depth > 6 {
+        return base_depth;
+    }
+    let ai_count = board.pieces(ai).count_ones() as i32;
+    let opp_count = board.pieces(ai.opponent()).count_ones() as i32;
+    let material_losing = ai_count < opp_count;
+    let positional_losing = board.positional_score(ai) < 0;
+    let mut bonus = 0;
+    if material_losing {
+        bonus += 1;
+    }
+    if positional_losing {
+        bonus += 1;
+    }
+    base_depth + bonus
 }
 
 fn bitboard_to_indices(mut bb: u64) -> Vec<u32> {

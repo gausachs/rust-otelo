@@ -140,6 +140,14 @@ impl Board {
         material + mobility + mobility_penalty + pst
     }
 
+    pub fn positional_score(self, c: Color) -> i32 {
+        let my = self.pieces(c);
+        let opp = self.pieces(c.opponent());
+        let empties = self.empty_count() as i32;
+        let phase = ((64 - empties) * 100 / 64) as i32;
+        piece_square_table(my, opp, phase)
+    }
+
     pub fn legal_moves(self, c: Color) -> u64 {
         let p = self.pieces(c);
         let o = self.pieces(c.opponent());
