@@ -233,6 +233,38 @@ function setLanguage(next) {
   }
 }
 
+function loadPrefs() {
+  try {
+    const storedLang = localStorage.getItem("otelo_lang");
+    const storedColor = localStorage.getItem("otelo_human_color");
+    const storedDepth = localStorage.getItem("otelo_depth");
+    if (storedLang) {
+      lang = storedLang;
+    }
+    if (storedColor !== null) {
+      setupHumanColorEl.value = storedColor;
+      humanColorEl.value = storedColor;
+    }
+    if (storedDepth) {
+      setupDepthEl.value = storedDepth;
+      depthEl.value = storedDepth;
+      depthValueEl.textContent = storedDepth;
+    }
+  } catch (_) {
+    // ignore storage errors
+  }
+}
+
+function savePrefs() {
+  try {
+    localStorage.setItem("otelo_lang", lang);
+    localStorage.setItem("otelo_human_color", humanColorEl.value);
+    localStorage.setItem("otelo_depth", depthEl.value);
+  } catch (_) {
+    // ignore storage errors
+  }
+}
+
 function idxFromRowCol(row, col) {
   const rank = 7 - row;
   return col + 8 * rank;
@@ -457,6 +489,8 @@ async function initGame() {
 
 applyI18n();
 hookLanguagePicker();
+loadPrefs();
+setLanguage(lang);
 setupDepthValueEl.textContent = setupDepthEl.value;
 setupDepthEl.addEventListener("input", () => {
   setupDepthValueEl.textContent = setupDepthEl.value;
@@ -465,6 +499,7 @@ setupStartEl.addEventListener("click", () => {
   humanColorEl.value = setupHumanColorEl.value;
   depthEl.value = setupDepthEl.value;
   depthValueEl.textContent = depthEl.value;
+  savePrefs();
   langModalEl.classList.add("hidden");
   if (!game) {
     initGame();
@@ -478,6 +513,7 @@ setupStartEl.addEventListener("click", () => {
 });
 languageSelectEl.addEventListener("change", () => {
   setLanguage(languageSelectEl.value || "en");
+  savePrefs();
 });
 confirmCancelEl.addEventListener("click", closeConfirm);
 confirmOkEl.addEventListener("click", () => {
